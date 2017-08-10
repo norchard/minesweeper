@@ -44,7 +44,7 @@ class Board extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if(this.props != nextProps){
+    if (this.props != nextProps) {
       this.state = { dimension: nextProps.dimension, size: nextProps.size.toLowerCase() };
       this.createBoard(nextProps.dimension);
     }
@@ -96,21 +96,56 @@ class Board extends Component {
     return count
   }
 
-  guessNeighboringZeros(row, col) {
-    var offSet = [-1, 0, 1], rowOffSet, colOffset
-    for ( rowOffSet in offSet ){
-      for ( colOffset in offSet ){
-        var compareRow = row + rowOffSet
-        var compareCol = col + colOffset
-        if (compareRow >= 0 && compareRow < this.state.dimension &&
-            compareCol >= 0 && compareCol < this.state.dimension){
-          this.state.guessed[compareRow][compareCol] = 1
-          if (this.state.board[compareRow][compareCol] == 0)
-            this.guessNeighboringZeros(compareRow, compareCol)
+  guessNeighbors(row, col) {
+    var rowStart = -1
+    var colStart = -1
+    var rowEnd = 1
+    var colEnd = 1
+
+    if (row == 0)
+      rowStart = 0
+    else if (row == this.state.dimension - 1)
+      rowEnd = 0
+
+    if (col == 0)
+      colStart = 0
+    else if (col == this.state.dimension - 1)
+      colEnd = 0
+
+    for (var i = rowStart; i <= rowEnd; i++){
+      for (var j = colStart; j <= colEnd; j++){
+        if (this.state.guessed[row + i][col +j] == 0){
+          this.markGuessed(row + i, col +j)
+          if (this.state.board[row + i][col +j] == 0)
+            this.guessNeighbors(row + i, col +j)
         }
       }
     }
   }
+  // var queue = []
+  // var next = [row, col]
+  // do {
+  //   if (num == 5)
+  //     return
+  //     for (var offsetRow = -1; offsetRow <= 1; offsetRow++){
+  //       for (var offsetCol = -1; offsetCol <= 1; offsetCol++){
+  //         // console.log("current row: ", next[0])
+  //         // console.log("current col: ", next[1])
+  //         var checkRow = row + offsetRow
+  //         var checkCol = col + offsetCol
+  //         console.log("row: ", checkRow, ", col: ", checkCol)
+  //         if (checkRow >= 0 && checkRow < this.state.dimension &&
+  //             checkCol >= 0 && checkCol < this.state.dimension){
+  //           if (this.state.guessed[checkRow][checkCol] == 0)
+  //             this.markGuessed(checkRow,checkCol)
+  //           if (this.state.board[checkRow][checkCol] == 0)
+  //             this.guessNeighbors(checkRow,checkCol, num + 1)
+  //             // queue.push([checkRow, checkCol])
+  //         }
+  //       }
+  //     }
+  //   // } while ( next = queue.shift() )
+  // }
   /* TODO: refactor all functions to use setState and be 'pure' */
 
   markGuessed(row, col) {
@@ -130,7 +165,7 @@ class Board extends Component {
   clickHandler(e, value, row, col) {
     this.markGuessed(row, col)
     if (value == 0)
-      this.guessNeighboringZeros(row, col)
+      this.guessNeighbors(row, col)
     else if (value == -1) {
       this.gameOver()
     }
