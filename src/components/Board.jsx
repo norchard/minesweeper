@@ -64,46 +64,21 @@ class Board extends Component {
   }
 
   guessNeighbors(row, col, newGuesses) {
-    var rowStart = -1
-    var colStart = -1
-    var rowEnd = 1
-    var colEnd = 1
+    for (var checkRow = row - 1; checkRow <= row + 1; checkRow++){
+      for (var checkCol = col - 1; checkCol <= col + 1; checkCol++){
+        if (checkRow < 0 || checkRow >= this.state.dimension ||
+            checkCol < 0 || checkCol >= this.state.dimension)
+            continue
 
-    if (row == 0)
-      rowStart = 0
-    else if (row == this.state.dimension - 1)
-      rowEnd = 0
-
-    if (col == 0)
-      colStart = 0
-    else if (col == this.state.dimension - 1)
-      colEnd = 0
-
-    for (var i = rowStart; i <= rowEnd; i++){
-      for (var j = colStart; j <= colEnd; j++){
-        if (this.state.guessed[row + i][col + j] == 0 &&
-            newGuesses[row + i][col + j] == 0){
-          newGuesses[row + i][col + j] = 1
-          if (this.state.board[row + i][col + j] == 0)
-            this.guessNeighbors(row + i, col + j, newGuesses)
+        if (this.state.guessed[checkRow][checkCol] == 0 &&
+            newGuesses[checkRow][checkCol] == 0){
+          newGuesses[checkRow][checkCol] = 1
+          if (this.state.board[checkRow][checkCol] == 0)
+            this.guessNeighbors(checkRow, checkCol, newGuesses)
         }
       }
     }
   }
-
-      // for (var checkRow = row - 1; checkRow <= row + 1; checkRow++){
-      //   for (var checkCol = col - 1; checkCol <= col + 1; checkCol++){
-      //     if (checkRow < 0 || checkRow >= this.state.dimension ||
-      //         checkCol < 0 || checkCol >= this.state.dimension)
-      //         continue
-      //
-      //     if (this.state.guessed[checkRow][checkCol] == 0) {
-      //       this.markGuessed(checkRow,checkCol)
-      //       if (this.state.board[checkRow][checkCol] == 0)
-      //         this.guessNeighbors(checkRow,checkCol, num + 1)
-      //     }
-      //   }
-      // }
 
   markGuessed(newGuesses) {
     var combined = this.state.guessed.map( (row, rowIndex) =>

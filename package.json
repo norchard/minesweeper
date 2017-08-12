@@ -6,7 +6,8 @@
   "author": "Nicole Orchard",
   "license": "MIT",
   "scripts": {
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server",
+    "build": "webpack"
   },
   "dependencies": {
     "html-webpack-plugin": "^2.30.1",
