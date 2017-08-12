@@ -27,16 +27,16 @@ class Board extends Component {
   createBoard(dimension) {
     var board = this.squareBoard(dimension, undefined)
     var guessed = this.squareBoard(dimension, 0)
-    this.placeMines(board, dimension - 1)
+    this.placeMines(board, dimension, Math.floor(dimension * 1.3))
     this.fillBoard(board)
     this.setState({ board: board, guessed: guessed })
   }
 
-  placeMines(board, mines) {
+  placeMines(board, dimension, mines) {
     for (var i = 0; i < mines; i++){
       do {
-        var row = Math.floor(Math.random() * mines)
-        var col = Math.floor(Math.random() * mines)
+        var row = Math.floor(Math.random() * dimension)
+        var col = Math.floor(Math.random() * dimension)
       } while (board[row][col] != undefined)
       board[row][col] = -1
     }
@@ -108,7 +108,7 @@ class Board extends Component {
 
   markGuessed(newGuesses) {
     var combined = this.state.guessed.map( (row, rowIndex) =>
-      row.map( (cell, colIndex) => cell || newGuesses[rowIndex][colIndex] ))
+      row.map( (cell, colIndex) => newGuesses[rowIndex][colIndex] || cell ))
     this.setState({ guessed: combined })
   }
 
@@ -130,6 +130,16 @@ class Board extends Component {
     this.markGuessed(mark)
   }
 
+  leftClickHandler(e, value, row, col) {
+    e.preventDefault()
+    var lock = this.squareBoard(this.state.dimension, 0)
+    if (this.state.guessed[row][col] == 0)
+      this.state.guessed[row][col] = 2
+    else if (this.state.guessed[row][col] == 2)
+      this.state.guessed[row][col] = 0
+    this.markGuessed(lock)
+  }
+
   checkWon() {
     for (var rowIndex = 0; rowIndex < this.state.dimension; rowIndex++){
       for (var colIndex = 0; colIndex < this.state.dimension; colIndex++){
@@ -147,18 +157,30 @@ class Board extends Component {
         {
           this.state.board.map( (row, rowIndex) =>
             row.map( (cell, colIndex) => {
-              if ( this.state.guessed[rowIndex][colIndex] )
+              if ( this.state.guessed[rowIndex][colIndex] == 1 )
                 return (
                   <div className="cell guessed">
-                    { ["💣","",1,2,3,4,5,6,7,8][cell + 1] }
+                    { ["💣","🌾",1,2,3,4,5,6,7,8][cell + 1] }
                   </div>)
               else if ( won )
                 return (
                   <div className="cell guessed">
                     { ["🐶","🐸","🐱","🦊","🐵","🐷","🐹","🐼","🐨","🐻"][Math.floor(Math.random() * 10)] }
                   </div>)
+              else if ( this.state.guessed[rowIndex][colIndex] == 2 )
+                return (
+                  <div
+                    className="cell"
+                    onContextMenu={ (e) => this.leftClickHandler(e, cell, rowIndex, colIndex) }>
+                    🔒
+                  </div>)
               else
-                return <div className="cell" onClick={ () => this.clickHandler(cell, rowIndex, colIndex) }></div>
+                return (
+                  <div
+                    className="cell guessable"
+                    onClick={ () => this.clickHandler(cell, rowIndex, colIndex)}
+                    onContextMenu={ (e) => this.leftClickHandler(e, cell, rowIndex, colIndex)} >
+                  </div>)
             })
           )
         }

@@ -16,17 +16,20 @@ class Minesweeper extends React.Component {
     return(
       <div>
           <input
+            className="button"
             type='button'
             value='Small'
-            onClick={ (e) => this.handleChange(e, 3) } />
-          <input
-            type='button'
-            value='Medium'
             onClick={ (e) => this.handleChange(e, 6) } />
           <input
+            className="button"
+            type='button'
+            value='Medium'
+            onClick={ (e) => this.handleChange(e, 9) } />
+          <input
+            className="button"
             type='button'
             value='Large'
-            onClick={ (e) => this.handleChange(e, 9) } />
+            onClick={ (e) => this.handleChange(e, 12) } />
           <Board
             dimension={ this.state.dimension }
             size={ this.state.size }/>
