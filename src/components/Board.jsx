@@ -8,8 +8,7 @@ class Board extends Component {
       size: props.size.toLowerCase(),
       board: [],
       guessed: [],
-      gameOver: false,
-      won: false
+      lost: false
     };
   }
 
@@ -114,7 +113,7 @@ class Board extends Component {
 
   gameOver() {
     var allGuessed = this.squareBoard(this.state.dimension, 1)
-    this.setState({ guessed: allGuessed, gameOver: true })
+    this.setState({ guessed: allGuessed, lost: true })
   }
 
   clickHandler(value, row, col) {
@@ -160,7 +159,7 @@ class Board extends Component {
               if ( this.state.guessed[rowIndex][colIndex] == 1 )
                 return (
                   <div className="cell guessed">
-                    { ["💣","🌾",1,2,3,4,5,6,7,8][cell + 1] }
+                    { ["💣", this.state.lost ? "💥" : "🌾",1,2,3,4,5,6,7,8][cell + 1] }
                   </div>)
               else if ( won )
                 return (
